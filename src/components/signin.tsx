@@ -22,7 +22,7 @@ export const SignIn = ({
       console.log({ email, password });
       if (
         email === "ezekielchepkwony@centralbank.go.ke" &&
-        password === "Lehmans@2024#"
+        password === "lehmans2024"
       ) {
         setEmail("");
         setPassword("");
