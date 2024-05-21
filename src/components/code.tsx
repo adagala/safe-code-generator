@@ -10,10 +10,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose,
 } from "@/components/ui/dialog";
 import { Label } from "./ui/label";
-import { Copy, Loader2, LogOut } from "lucide-react";
+import { Copy, Loader2, LogOut, ShipWheel } from "lucide-react";
 import {
   InputOTP,
   InputOTPGroup,
@@ -21,15 +20,16 @@ import {
   InputOTPSlot,
 } from "./ui/input-otp";
 import { useToast } from "./ui/use-toast";
-import { cn } from "@/lib/utils";
 import { LoadingSpinner } from "./loading-spinner";
+
+type Log = { time: string; description: string };
 
 export const Code = ({
   setIsLoggedIn,
 }: {
   setIsLoggedIn: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const [logs, setLogs] = useState<string[]>([]);
+  const [logs, setLogs] = useState<Log[]>([]);
   const [isLogging, setIsLogging] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -63,12 +63,18 @@ export const Code = ({
         const timeString =
           now.toLocaleTimeString("en-US", { hour12: false }) +
           `.${now.getMilliseconds()}`;
-        const logMessage = `${timeString}: ${logMessages[currentIndex]}`;
+        const logMessage = {
+          time: timeString,
+          description: logMessages[currentIndex],
+        };
 
         if (logMessages.length - 1 === currentIndex) {
           setLogs((prevLogs) => [
             ...prevLogs,
-            `${timeString}: Code retreival complete. Getting details...`,
+            {
+              time: timeString,
+              description: "Code retreival complete. Getting details...",
+            },
           ]);
           setTimeout(() => {
             setIsLogging(false);
@@ -159,15 +165,26 @@ export const Code = ({
           <ResultsDialog
             isDialogOpen={isDialogOpen}
             setIsDialogOpen={setIsDialogOpen}
-            setLogs={setLogs}
-            setCode={setCode}
           />
-          <div className=" text-green-500 flex flex-col gap-2 text-sm">
-            {logs.map((log, index) => (
-              <div key={index}>
-                <p>{log}</p>
+          <div className=" text-green-500 flex flex-col gap-2 text-sm bg-black px-4 py-2 min-h-72">
+            {logs.length > 0 ? (
+              logs.map((log, index) => (
+                <div key={index}>
+                  <div className="grid grid-cols-[1fr,5fr]">
+                    <div className="">{log.time}:</div>
+                    <div className="pl-0.5">{log.description}</div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="flex justify-center items-center min-h-72">
+                <div className="flex flex-col items-center text-xl font-bold">
+                  <ShipWheel className="h-8 w-8 animate-spin" />
+                  <div>Oracle</div>
+                  <div>Partner Portal</div>
+                </div>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>
@@ -178,13 +195,9 @@ export const Code = ({
 const ResultsDialog = ({
   isDialogOpen,
   setIsDialogOpen,
-  setLogs,
-  setCode,
 }: {
   isDialogOpen: boolean;
   setIsDialogOpen: Dispatch<SetStateAction<boolean>>;
-  setLogs: Dispatch<SetStateAction<string[]>>;
-  setCode: Dispatch<SetStateAction<string>>;
 }) => {
   return (
     <Dialog open={isDialogOpen}>
