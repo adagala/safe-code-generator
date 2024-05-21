@@ -46,11 +46,15 @@ export const Code = ({
 
   useEffect(() => {
     const logMessages = [
-      "Received connection to oracle servers",
-      "Received email and password credentials",
-      "Authenticating email and password",
-      "Connection to server successfully established",
-      "Receiving code details from oracle servers",
+      "Establishing connection to oracle servers 138.1.33.162",
+      "Received connection to oracle servers 138.1.33.162",
+      "Connection to oracle servers 138.1.33.162 was successful",
+      "Received email and password credentials from user",
+      "Validating & Authenticating email and password",
+      "Authentication was successful",
+      `Sending provided code ${code} for confirmation`,
+      "Valid code in the required format was provided",
+      "Receiving safe code details from oracle servers",
       "Successfully retreived code credentials",
     ];
     if (isLogging) {
@@ -64,7 +68,7 @@ export const Code = ({
         if (logMessages.length - 1 === currentIndex) {
           setLogs((prevLogs) => [
             ...prevLogs,
-            `${timeString}: Code generation complete. Getting details...`,
+            `${timeString}: Code retreival complete. Getting details...`,
           ]);
           setTimeout(() => {
             setIsLogging(false);
@@ -74,13 +78,13 @@ export const Code = ({
           setLogs((prevLogs) => [...prevLogs, logMessage]);
           setCurrentIndex((prevIndex) => (prevIndex + 1) % logMessages.length);
         }
-      }, 2500);
+      }, 3000);
 
       return () => {
         clearInterval(logInterval);
       };
     }
-  }, [isLogging, currentIndex, logs.length]);
+  }, [isLogging, currentIndex, logs.length, code]);
 
   return (
     <div className="flex min-h-screen">
@@ -101,7 +105,7 @@ export const Code = ({
               ></path>
             </svg>
             <p className="mt-2 text-sm">
-              Provide your safe code in order to get more info.
+              Provide your safe code in order to get more information.
             </p>
           </div>
           <div>
@@ -260,14 +264,7 @@ const ResultsDialog = ({
           </div>
         </div>
         <DialogFooter>
-          <Button
-            onClick={() => {
-              setIsDialogOpen(false);
-              setLogs([]);
-              setCode("");
-            }}
-            type="button"
-          >
+          <Button onClick={() => setIsDialogOpen(false)} type="button">
             Done
           </Button>
         </DialogFooter>
@@ -284,7 +281,7 @@ export const RequestCodeDialog = () => {
     <Dialog>
       <DialogTrigger asChild>
         <Button className="w-full mt-2" variant="outline">
-          Access Code
+          Request Code
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
