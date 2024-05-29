@@ -26,7 +26,12 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 
 type Log = { time: string; description: string };
 
-type CodeStatus = "pending" | "verifying" | "success" | "failed";
+type CodeStatus =
+  | "pending"
+  | "verifying"
+  | "success"
+  | "failed"
+  | "request_success";
 
 export const Code = ({
   setIsLoggedIn,
@@ -387,7 +392,7 @@ export const RequestCodeDialog = ({
                         "Your request has been received. Make payment to access code. You'll receive communication from us soon.",
                       duration: 10000,
                     });
-                    setStatus("success");
+                    setStatus("request_success");
                   }, 7000);
                 } else if (value === `${code}`) {
                   setTimeout(() => {
