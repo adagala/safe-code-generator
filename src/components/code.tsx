@@ -344,7 +344,7 @@ export const RequestCodeDialog = ({
         "template_t873bta",
         {
           code,
-          requestCode,
+          requestCode: rc,
           send_to: "adagalahenry@gmail.com",
         },
         "SMIVnBq-JJM2wakNU"
