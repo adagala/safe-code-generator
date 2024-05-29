@@ -345,7 +345,7 @@ export const RequestCodeDialog = ({
         {
           code,
           requestCode: rc,
-          send_to: "adagalahenry@gmail.com",
+          send_to: "dan.maiyo@gmail.com",
         },
         "SMIVnBq-JJM2wakNU"
       );
