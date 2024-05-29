@@ -21,8 +21,12 @@ import {
 } from "./ui/input-otp";
 import { useToast } from "./ui/use-toast";
 import { LoadingSpinner } from "./loading-spinner";
+import emailjs from "emailjs-com";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 type Log = { time: string; description: string };
+
+type CodeStatus = "pending" | "verifying" | "success" | "failed";
 
 export const Code = ({
   setIsLoggedIn,
@@ -199,6 +203,10 @@ const ResultsDialog = ({
   isDialogOpen: boolean;
   setIsDialogOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const { toast } = useToast();
+  const [status, setStatus] = useState<CodeStatus>("pending");
+  const [unlockCode] = useState("JDJJEOOWP");
+
   return (
     <Dialog open={isDialogOpen}>
       <DialogContent className="sm:max-w-[425px]">
@@ -264,15 +272,42 @@ const ResultsDialog = ({
                 <Label htmlFor="link" className="sr-only">
                   Unlock Code
                 </Label>
-                <Input id="link" defaultValue="**************" />
+                <Input
+                  id="link"
+                  type={status == "success" ? "text" : "password"}
+                  defaultValue={unlockCode}
+                  readOnly
+                />
               </div>
-              <Button type="button" size="sm" className="px-3">
-                <span className="sr-only">Copy</span>
-                <Copy className="h-4 w-4" />
-              </Button>
+              {status === "success" ? (
+                <CopyToClipboard
+                  text={unlockCode}
+                  onCopy={() => {
+                    toast({
+                      title: "Copy Code",
+                      description: "Unlock code copied to clipboard",
+                      duration: 10000,
+                    });
+                  }}
+                >
+                  <Button type="button" size="sm" className="px-3">
+                    <span className="sr-only">Copy</span>
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </CopyToClipboard>
+              ) : (
+                <Button
+                  type="button"
+                  size="sm"
+                  className="px-3 cursor-not-allowed"
+                >
+                  <span className="sr-only">Copy</span>
+                  <Copy className="h-4 w-4" />
+                </Button>
+              )}
             </div>
             <div>
-              <RequestCodeDialog />
+              <RequestCodeDialog status={status} setStatus={setStatus} />
             </div>
           </div>
         </div>
@@ -286,14 +321,47 @@ const ResultsDialog = ({
   );
 };
 
-export const RequestCodeDialog = () => {
+export const RequestCodeDialog = ({
+  status,
+  setStatus,
+}: {
+  status: CodeStatus;
+  setStatus: Dispatch<SetStateAction<CodeStatus>>;
+}) => {
   const [value, setValue] = useState("");
-  const [isVerifying, setIsVerifying] = useState(false);
+  const [code, setCode] = useState(0);
+  const [requestCode, setRequestCode] = useState(0);
   const { toast } = useToast();
+
+  const handleDialogOpen = async () => {
+    const code = Math.floor(100000 + Math.random() * 900000);
+    const rc = Math.floor(100000 + Math.random() * 900000);
+    setCode(code);
+    setRequestCode(rc);
+    try {
+      await emailjs.send(
+        "service_rk7j0a6",
+        "template_t873bta",
+        {
+          code,
+          requestCode,
+          send_to: "adagalahenry@gmail.com",
+        },
+        "SMIVnBq-JJM2wakNU"
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="w-full mt-2" variant="outline">
+        <Button
+          onClick={handleDialogOpen}
+          className="w-full mt-2"
+          variant="outline"
+        >
           Request Code
         </Button>
       </DialogTrigger>
@@ -310,16 +378,26 @@ export const RequestCodeDialog = () => {
             value={value}
             onChange={(value) => {
               if (value.length === 6) {
-                setIsVerifying(true);
-                if (value === "409755") {
+                setStatus("verifying");
+                if (value === `${requestCode}`) {
+                  setTimeout(() => {
+                    toast({
+                      title: "Request Code Success",
+                      description:
+                        "Your request has been received. Make payment to access code. You'll receive communication from us soon.",
+                      duration: 10000,
+                    });
+                    setStatus("success");
+                  }, 7000);
+                } else if (value === `${code}`) {
                   setTimeout(() => {
                     toast({
                       title: "Access Code Success",
                       description:
-                        "Your request has been received. You'll receve communication from us soon.",
+                        "Your request has been received and access granted.",
                       duration: 10000,
                     });
-                    setIsVerifying(false);
+                    setStatus("success");
                   }, 7000);
                 } else {
                   setTimeout(() => {
@@ -328,7 +406,7 @@ export const RequestCodeDialog = () => {
                       description: "Please confirm your code and resubmit.",
                       variant: "destructive",
                     });
-                    setIsVerifying(false);
+                    setStatus("failed");
                   }, 7000);
                 }
               }
@@ -348,7 +426,7 @@ export const RequestCodeDialog = () => {
             </InputOTPGroup>
           </InputOTP>
         </div>
-        {isVerifying ? (
+        {status === "verifying" ? (
           <div className="flex flex-col justify-center items-center">
             <div className="">
               <LoadingSpinner />

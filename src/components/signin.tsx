@@ -19,7 +19,6 @@ export const SignIn = ({
 
     setIsLoading(true);
     setTimeout(() => {
-      console.log({ email, password });
       if (
         email === "ezekielchepkwony@centralbank.go.ke" &&
         password === "lehmans2024"
