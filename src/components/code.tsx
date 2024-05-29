@@ -205,7 +205,7 @@ const ResultsDialog = ({
 }) => {
   const { toast } = useToast();
   const [status, setStatus] = useState<CodeStatus>("pending");
-  const [unlockCode] = useState("JDJJEOOWP");
+  const [unlockCode] = useState("1758267");
 
   return (
     <Dialog open={isDialogOpen}>
