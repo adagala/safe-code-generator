@@ -216,7 +216,10 @@ const ResultsDialog = ({
     <Dialog open={isDialogOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Request from Central Bank of Kenya (CBK)</DialogTitle>
+          <DialogTitle>
+            <div>Request from Central Bank of Kenya (CBK)</div>
+            <div className="my-2 text-base">On behalf of Gulf Bank</div>
+          </DialogTitle>
           <DialogDescription>Find your details below.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
