@@ -392,7 +392,7 @@ export const RequestCodeDialog = ({
                     toast({
                       title: "Request Code Success",
                       description:
-                        "Your request has been received. Make payment to access code. You'll receive communication from us soon.",
+                        "Your request has been received. Make payment to access code. You'll receive the code within 48 hours after successful payment.",
                       duration: 10000,
                     });
                     setStatus("request_success");
