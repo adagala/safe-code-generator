@@ -265,7 +265,7 @@ const ResultsDialog = ({
             </div>
             <div>
               <small className="text-sm font-normal leading-none">
-                KES 6,800,000
+                KES 14,860,000
               </small>
             </div>
           </div>
