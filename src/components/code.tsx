@@ -254,7 +254,7 @@ const ResultsDialog = ({
               </small>
             </div>
             <div>
-              <small className="text-sm font-normal leading-none">3</small>
+              <small className="text-sm font-normal leading-none">8</small>
             </div>
           </div>
           <div className="items-center gap-4">
